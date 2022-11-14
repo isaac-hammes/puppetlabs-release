@@ -1,0 +1,46 @@
+// https://jenkins-sre.delivery.puppetlabs.net/view/release-engineering/job/pipeline_future-puppetlabs-release_ship-release-packages/
+
+pipeline {
+  agent  {
+    label 'k8s-worker'
+  }
+
+  parameters {
+    string(
+      name: 'PROJECT',
+      defaultValue: '',
+      description: 'Name of release package to ship (example: puppet6-release)'
+    )
+    string(
+      name: 'REPO_NAME',
+      defaultValue: '',
+      description: 'Name of the repository to ship to (example: puppet6)'
+    )
+    string(
+      name: 'REF',
+      defaultValue: 'main',
+      description: 'Git ref of puppetlabs-release to ship from (defaults to HEAD of main)'
+    )
+    choice(
+      name: 'NIGHTLY',
+      choices: ['true', 'false'],
+      description: 'Is this a nightly release package?'
+    )
+  }
+
+  options {
+    timestamps()
+    ansiColor('xterm')
+    preserveStashes(buildCount: 15)
+  }
+
+  stages {
+    stage('Ship') {
+      steps {
+        script {
+          sh "./ci/future_stage_and_ship"
+        }
+      }
+    }
+  }
+}

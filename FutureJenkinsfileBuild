@@ -1,0 +1,42 @@
+// https://jenkins-sre.delivery.puppetlabs.net/view/release-engineering/job/pipeline_future-puppetlabs-release_vanagon-build
+
+pipeline {
+  agent  {
+    label 'k8s-worker'
+  }
+
+  options {
+    timestamps()
+    ansiColor('xterm')
+    preserveStashes(buildCount: 15)
+  }
+
+  stages {
+    stage('BuildArtifacts') {
+      matrix {
+        axes {
+          axis {
+            name 'PROJECT'
+            values 'release-puppet-nightly', 'release-puppet-stable',
+              'release-puppet6-nightly', 'release-puppet6-stable',
+              'release-puppet7-nightly', 'release-puppet7-stable'
+
+            // In future versions we'll want to migrate these towards:
+            // release-puppet6-stable, release-puppet6-nightly
+            // release-puppet7-stable, release-puppet7-nightly
+            // release-stable, release-nightly
+          }
+        }
+        stages {
+          stage ('BuildJob') {
+            steps {
+              build(job: 'pipeline_puppetlabs-release_vanagon-build-project',
+                    parameters: [string(name: 'PROJECT', value: "${PROJECT}"),
+                                 string(name: 'BRANCH', value: "${env.BRANCH_NAME}")])
+            }
+          }
+        }
+      }
+    }
+  }
+}
