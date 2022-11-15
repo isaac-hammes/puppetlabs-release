@@ -18,7 +18,7 @@ export PROJECT_OVERRIDE=$PROJECT
 export BUNDLE_PATH=.bundle/gems
 export BUNDLE_BIN=.bundle/bin
 
-bundle install
+bundle update
 
 bundle exec vanagon sign
 bundle exec vanagon ship
