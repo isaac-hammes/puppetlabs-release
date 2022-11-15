@@ -49,7 +49,7 @@ bundle install
 case $NIGHTLY in
   true)
     # Refuse to ship non-nightly projects to nightly repos.
-    if [[ $PROJECT != *-nightly-* ]]; then
+    if [[ $PROJECT != *-nightly ]]; then
       echo "Error: Non-nightly project, \"$PROJECT\" can not be shipped with NIGHTLY=true" 1>&2
       exit 1
     fi
@@ -63,8 +63,8 @@ case $NIGHTLY in
   ;;
   false)
     bundle exec rake --trace pl:jenkins:stage_release_packages
-    bundle exec rake --trace pl:remote:update_yum_repo pl:remote:update_apt_repo
-    bundle exec rake --trace pl:remote:deploy_final_builds_to_s3 pl:remote:deploy_to_rsync_server
+    bundle exec rake --trace pl:remote:update_apt_repo
+    bundle exec rake --trace pl:remote:future_deploy_apt_repo_to_s3
   ;;
   *)
     echo 'Error: Unrecognized value for $NIGHTLY: ' $NIGHTLY 1>&2
