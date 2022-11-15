@@ -56,3 +56,4 @@ component 'repos_puppet_com' do |pkg, settings, platform|
   pkg.install_configfile(*install_configfile)
   pkg.install { os_fixup }
 end
+
