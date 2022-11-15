@@ -10,7 +10,7 @@ component 'repos_puppet_com' do |pkg, settings, platform|
 
   case
   when platform.is_deb?
-    destination_server = 'apt.repos.puppetlabs.com'
+    destination_server = 'apt.repos.puppet.com'
     url = "file://files/#{destination_server}/#{target_repo}.list.template"
     install_configfile = [
       "#{target_repo}.list.template",
