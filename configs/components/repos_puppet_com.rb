@@ -5,12 +5,10 @@ component 'repos_puppet_com' do |pkg, settings, platform|
   target_repo = settings[:target_repo]
 
   # Some awkward casing here because of the inconsistent layout we have
-  destination_server = 'yum.puppetlabs.com'
-  destination_server = 'nightlies.puppet.com' if target_repo =~ /-nightly$/
+  destination_server = 'apt.repos.puppet.com'
 
   case
   when platform.is_deb?
-    destination_server = 'apt.repos.puppet.com'
     url = "file://files/#{destination_server}/#{target_repo}.list.template"
     install_configfile = [
       "#{target_repo}.list.template",
