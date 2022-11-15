@@ -1,50 +1,60 @@
 component 'repos_puppet_com' do |pkg, settings, platform|
   pkg.version '2021.09.13'
 
-  puppet_product = settings[:puppet_product]
-  apt_component = settings[:apt_component]
+  os_fixup = nil
+  target_repo = settings[:target_repo]
 
-  package_tag = "#{puppet_product}-#{apt_component}.list"
-  template_name = "#{package_tag}.template"
-  install_path = "/etc/apt/sources.list.d/#{package_tag}"
+  # Some awkward casing here because of the inconsistent layout we have
+  destination_server = 'yum.puppetlabs.com'
+  destination_server = 'nightlies.puppet.com' if target_repo =~ /-nightly$/
 
-  template_location = "file://files/apt.repos.puppet.com/#{template_name}"
-  install_configfile = %W[#{template_name} #{install_path}]
+  case
+  when platform.is_deb?
+    destination_server = 'apt.repos.puppetlabs.com'
+    url = "file://files/#{destination_server}/#{target_repo}.list.template"
+    install_configfile = [
+      "#{target_repo}.list.template",
+      "/etc/apt/sources.list.d/#{target_repo}.list"
+    ]
+    os_fixup = [
+      "sed -i 's|__CODENAME__|#{platform.codename}|g' "\
+      "/etc/apt/sources.list.d/#{target_repo}.list"
+    ]
+  when platform.is_sles?
+    url = "file://files/#{destination_server}/#{target_repo}.sles.txt"
+    repo_path = '/etc/zypp/repos.d'
+    install_configfile = [
+      "#{target_repo}.sles.txt",
+      "#{repo_path}/#{target_repo}.repo"
+    ]
+  when platform.is_cisco_wrlinux?
+    url = "file://files/#{destination_server}/#{target_repo}.repo.txt"
+    repo_path = '/etc/yum/repos.d'
+    install_configfile = [
+      "#{target_repo}.repo.txt",
+      "#{repo_path}/#{target_repo}.repo"
+    ]
+  else
+    # centos, redhat, fedora
+    url = "file://files/#{destination_server}/#{target_repo}.repo.txt"
+    repo_path = '/etc/yum.repos.d'
+    install_configfile = [
+      "#{target_repo}.repo.txt",
+      "#{repo_path}/#{target_repo}.repo"
+    ]
+  end
 
-  os_fixup = [
-    "sed -i 's|__CODENAME__|#{platform.codename}|g' #{install_path}"
-  ]
+  if os_fixup.nil?
+    # Default sed-fu for setting os information in the .repo file
+    # Need to defer this setting to the end because of 'repo_path'
+    os_fixup = [
+      "sed -i -e 's|__OS_NAME__|#{platform.os_name}|g' "\
+      "-e 's|__OS_VERSION__|#{platform.os_version}|g' "\
+      "#{repo_path}/#{target_repo}.repo"
+    ]
+  end
 
-  ### Not yet implemented
-
-  # when platform.is_sles?
-  #   url = "file://files/#{settings[:target_repo]}.sles.txt"
-  #   repo_path = '/etc/zypp/repos.d'
-  #   install_configfile = [
-  #     "#{settings[:target_repo]}.sles.txt",
-  #     "#{repo_path}/#{settings[:target_repo]}.repo"
-  #   ]
-  # else
-  #   # centos, redhat, fedora
-  #   url = "file://files/#{settings[:target_repo]}.repo.txt"
-  #   repo_path = '/etc/yum.repos.d'
-  #   install_configfile = [
-  #     "#{settings[:target_repo]}.repo.txt",
-  #     "#{repo_path}/#{settings[:target_repo]}.repo"
-  #   ]
-  # end
-
-  # if os_fixup.nil?
-  #   # Default sed-fu for setting os information in the .repo file
-  #   # Need to defer this setting to the end because of 'repo_path'
-  #   os_fixup = [
-  #     "sed -i -e 's|__OS_NAME__|#{platform.os_name}|g' "\
-  #     "-e 's|__OS_VERSION__|#{platform.os_version}|g' "\
-  #     "#{repo_path}/#{settings[:target_repo]}.repo"
-  #   ]
-  # end
-
-  pkg.url template_location
+  pkg.url url
   pkg.install_configfile(*install_configfile)
   pkg.install { os_fixup }
 end
