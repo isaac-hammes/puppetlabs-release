@@ -27,7 +27,7 @@ export PROJECT_OVERRIDE=$PROJECT
 
 export BUNDLE_PATH=.bundle/gems
 export BUNDLE_BIN=.bundle/bin
-
+export PACKAGING_LOCATION=git@github.com:puppetlabs/packaging#test_new_apt_repo
 # Fixes shipping for older sha's. This probably is no longer needed
 git checkout -f $REF
 

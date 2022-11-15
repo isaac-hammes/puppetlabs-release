@@ -16,6 +16,7 @@ export TEAM=release
 
 export BUNDLE_PATH=.bundle/gems
 export BUNDLE_BIN=.bundle/bin
+export PACKAGING_LOCATION=git@github.com:puppetlabs/packaging#test_new_apt_repo
 
 bundle install
 
