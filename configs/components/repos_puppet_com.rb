@@ -26,7 +26,7 @@ component 'repos_puppet_com' do |pkg, settings, platform|
       "#{repo_path}/#{target_repo}.repo"
     ]
   when platform.is_cisco_wrlinux?
-    url = "file://files/#{destination_server}/#{target_repo}.repo.template"
+    url = "file://files/#{destination_server}/#{target_repo}.list.template"
     repo_path = '/etc/yum/repos.d'
     install_configfile = [
       "#{target_repo}.repo.template",
