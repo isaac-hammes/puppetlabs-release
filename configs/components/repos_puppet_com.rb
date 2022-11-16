@@ -26,18 +26,18 @@ component 'repos_puppet_com' do |pkg, settings, platform|
       "#{repo_path}/#{target_repo}.repo"
     ]
   when platform.is_cisco_wrlinux?
-    url = "file://files/#{destination_server}/#{target_repo}.repo.txt"
+    url = "file://files/#{destination_server}/#{target_repo}.repo.template"
     repo_path = '/etc/yum/repos.d'
     install_configfile = [
-      "#{target_repo}.repo.txt",
+      "#{target_repo}.repo.template",
       "#{repo_path}/#{target_repo}.repo"
     ]
   else
     # centos, redhat, fedora
-    url = "file://files/#{destination_server}/#{target_repo}.repo.txt"
+    url = "file://files/#{destination_server}/#{target_repo}.repo.template"
     repo_path = '/etc/yum.repos.d'
     install_configfile = [
-      "#{target_repo}.repo.txt",
+      "#{target_repo}.repo.template",
       "#{repo_path}/#{target_repo}.repo"
     ]
   end
