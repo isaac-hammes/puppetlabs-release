@@ -14,6 +14,7 @@ eval "$(ssh-agent -t 24h -s)"
 ssh-add "${HOME}/.ssh/id_rsa"
 export TEAM=release
 export PROJECT_OVERRIDE=$PROJECT
+export PACKAGING_LOCATION=git@github.com:puppetlabs/packaging#test_new_apt_repo
 
 export BUNDLE_PATH=.bundle/gems
 export BUNDLE_BIN=.bundle/bin
