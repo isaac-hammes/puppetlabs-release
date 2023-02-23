@@ -198,7 +198,7 @@ function create_build_directory {
       install_rpm_repo_file
       ;;
     deb)
-      build_directory="$build_base_directory/$os_name/$project_name"
+      build_directory="$build_base_directory/deb/$os_name/$project_name"
       install_deb_key_files
       install_deb_list_file
       ;;
